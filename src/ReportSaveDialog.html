@@ -1,0 +1,135 @@
+<!doctype html> 
+<html> 
+<head> 
+<meta charset="utf-8"/> 
+<meta name="viewport" content="width=device-width,initial-scale=1"/> 
+<style> 
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap'); 
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; } 
+  :root { 
+    --bg:#f8f7f4; --surface:#ffffff; --border:#e4e0d9; 
+    --accent:#1a5c3a; --accent2:#2e7d52; --text:#1c1c1c; --muted:#7a7570; 
+    --chip-bg:#eef5f1; --chip-border:#c6ddd0; --chip-hover:#d4ece0; 
+    --danger:#c0392b; --radius:12px; 
+  } 
+  html, body { height:100%; font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); } 
+  .wrap { min-height:100%; display:flex; align-items:center; justify-content:center; padding:26px; } 
+  .card { background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:36px 34px 28px; width:100%; max-width:590px; box-shadow:0 6px 32px rgba(0,0,0,.07); } 
+  .header { display:flex; align-items:center; gap:14px; margin-bottom:26px; } 
+  .icon-wrap { width:50px; height:50px; background:var(--accent); border-radius:14px; display:flex; align-items:center; justify-content:center; flex-shrink:0; } 
+  .icon-wrap svg { width:26px; height:26px; } 
+  .title { font-size:21px; font-weight:600; line-height:1.2; } 
+  .sub   { font-size:14px; color:var(--muted); margin-top:3px; } 
+  label  { display:block; font-size:12px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; } 
+  input[type=text] { width:100%; padding:13px 16px; border:1.5px solid var(--border); border-radius:var(--radius); font-family:inherit; font-size:16px; color:var(--text); background:var(--bg); outline:none; transition:border-color .15s; } 
+  input[type=text]:focus { border-color:var(--accent2); background:#fff; } 
+  input[type=text]::placeholder { color:#bfbab4; } 
+  .chips-label { margin-top:20px; margin-bottom:9px; } 
+  .chips { display:flex; flex-wrap:wrap; gap:8px; } 
+  .chip { padding:7px 15px; border:1px solid var(--chip-border); border-radius:999px; background:var(--chip-bg); color:var(--accent); font-family:inherit; font-size:14px; font-weight:500; cursor:pointer; transition:background .12s,border-color .12s; } 
+  .chip:hover { background:var(--chip-hover); border-color:var(--accent2); } 
+  .chip.active { background:var(--accent); border-color:var(--accent); color:#fff; } 
+  .divider { border:none; border-top:1px solid var(--border); margin:26px 0 20px; } 
+  .actions { display:flex; gap:10px; justify-content:flex-end; } 
+  .btn { padding:11px 22px; border-radius:var(--radius); font-family:inherit; font-size:15px; font-weight:600; cursor:pointer; border:none; transition:opacity .12s,background .12s; } 
+  .btn:disabled { opacity:.45; cursor:default; } 
+  .btn-secondary { background:transparent; border:1.5px solid var(--border); color:var(--muted); } 
+  .btn-secondary:hover:not(:disabled) { background:var(--bg); } 
+  .btn-primary { background:var(--accent); color:#fff; display:flex; align-items:center; gap:9px; } 
+  .btn-primary:hover:not(:disabled) { background:var(--accent2); } 
+  .btn-primary svg { width:18px; height:18px; } 
+  .no-name { font-size:13px; color:var(--muted); text-decoration:underline; cursor:pointer; background:none; border:none; font-family:inherit; padding:0; margin-right:auto; align-self:center; } 
+  .no-name:hover { color:var(--text); } 
+  .status { font-size:13px; color:var(--muted); text-align:center; margin-top:12px; min-height:18px; } 
+  .status.running { color:var(--accent2); } 
+  .status.err     { color:var(--danger); } 
+</style> 
+</head> 
+<body> 
+<div class="wrap"> 
+  <div class="card"> 
+    <div class="header"> 
+      <div class="icon-wrap"> 
+        <svg viewBox="0 0 24 24" fill="none"> 
+          <path d="M12 3v10m0 0 4-4m-4 4-4-4" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/> 
+          <path d="M5 16v3h14v-3" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/> 
+        </svg> 
+      </div> 
+      <div> 
+        <div class="title">Who is saving today’s report?</div> 
+        <div class="sub">Select an operator or enter a custom name.</div> 
+      </div> 
+    </div> 
+
+    <label for="nameInput">Operator name</label> 
+    <input id="nameInput" type="text" placeholder="Example: Operator A" oninput="onInput()" autocomplete="off"/> 
+
+    <label class="chips-label">Quick selection</label> 
+    <div class="chips" id="chips"><?!= chips ?></div> 
+
+    <hr class="divider"/> 
+
+    <div class="actions"> 
+      <button class="no-name" onclick="save('')">No name</button> 
+      <button class="btn btn-secondary" onclick="google.script.host.close()">Cancel</button> 
+      <button class="btn btn-primary" id="saveBtn" onclick="saveFromInput()"> 
+        <svg viewBox="0 0 24 24" fill="none"> 
+          <path d="M5 3h11l3 3v15H5V3Z" stroke="#fff" stroke-width="2" stroke-linejoin="round"/> 
+          <path d="M9 3v5h6V3" stroke="#fff" stroke-width="2" stroke-linejoin="round"/> 
+          <rect x="7" y="13" width="10" height="6" rx="1" stroke="#fff" stroke-width="2"/> 
+        </svg> 
+        Save 
+      </button> 
+    </div> 
+
+    <div class="status" id="status"></div> 
+  </div> 
+</div> 
+
+<script> 
+  const input   = document.getElementById('nameInput'); 
+  const status  = document.getElementById('status'); 
+  const saveBtn = document.getElementById('saveBtn'); 
+  let saving = false; 
+
+  function pick(name) { 
+    input.value = name; 
+    document.querySelectorAll('.chip').forEach(c => 
+      c.classList.toggle('active', c.textContent.trim() === name)); 
+  } 
+
+  function onInput() { 
+    const v = input.value.trim(); 
+    document.querySelectorAll('.chip').forEach(c => 
+      c.classList.toggle('active', c.textContent.trim() === v)); 
+  } 
+
+  function saveFromInput() { 
+    save(input.value.trim()); 
+  } 
+
+  function save(name) { 
+    if (saving) return; 
+
+    saving = true; 
+    saveBtn.disabled = true; 
+
+    status.textContent = 'Export in progress…'; 
+    status.className = 'status running'; 
+
+    google.script.run 
+      .withSuccessHandler(() => { 
+        status.textContent = ''; 
+        google.script.host.close(); 
+      }) 
+      .withFailureHandler(err => { 
+        status.textContent = '⛔ ' + (err && err.message ? err.message : err); 
+        status.className = 'status err'; 
+        saving = false; 
+        saveBtn.disabled = false; 
+      }) 
+      .reportMenu_SaveWithName(name); 
+  } 
+</script> 
+</body> 
+</html>
