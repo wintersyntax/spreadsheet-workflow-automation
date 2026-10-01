@@ -9856,7 +9856,7 @@ function adminConfig_DeleteNajavaAutor(name) {
  * ═══════════════════════════════════════════════════════════════════════
  */
 
-const REPORT_ROOT_FOLDER_ID = "1BsaxmFBxmexIZgdePF4nLdNRcDYnyvDC";
+const REPORT_ROOT_FOLDER_ID = "PASTE_REPORT_ROOT_FOLDER_ID_HERE";
 const REPORT_TZ             = "Europe/Zagreb";
 
 const REPORT_SENT_DATE_KEY          = "report_sent_date_yyyy_mm_dd";
